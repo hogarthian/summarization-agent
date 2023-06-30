@@ -7,6 +7,7 @@ import dotenv
 dotenv.load_dotenv('config.env')
 
 from langchain import OpenAI, PromptTemplate, LLMChain
+from langchain.chat_models import ChatOpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.mapreduce import MapReduceChain
 from langchain.prompts import PromptTemplate
@@ -16,10 +17,11 @@ from langchain.chains.summarize import load_summarize_chain
 import langchain
 langchain.debug = True
 
-llm = OpenAI(temperature=0, model_name="gpt-3.5-turbo-16k")
+model_name = "gpt-4-0613"
+llm = ChatOpenAI(temperature=0, model_name=model_name, max_tokens=7000)
 # llm = OpenAI(temperature=0)
 
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=100)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=5000, chunk_overlap=100)
 
 
 # chain = load_summarize_chain(llm, chain_type="map_reduce")
@@ -46,12 +48,14 @@ if __name__ == '__main__':
     {text}
     CONCISE SUMMARY:"""
     PROMPT = PromptTemplate(template=prompt_template, input_variables=["text"])
-    # chain = load_summarize_chain(llm, chain_type="map_reduce", return_intermediate_steps=True, map_prompt=PROMPT, combine_prompt=PROMPT)
+    chain = load_summarize_chain(llm, chain_type="map_reduce", return_intermediate_steps=True, map_prompt=PROMPT, combine_prompt=PROMPT)
     # result = chain({"input_documents": doc_texts}, return_only_outputs=True)
     # print(result)
 
-    chain = load_summarize_chain(llm, chain_type="map_reduce", return_intermediate_steps=True)
+    # chain = load_summarize_chain(llm, chain_type="map_reduce", return_intermediate_steps=True)
     result = chain({"input_documents": doc_texts}, return_only_outputs=True)
-    print(result)
-    # chain.run(doc_texts)
+
+    with open(f'1-{model_name}-.txt', 'w') as f:
+        f.writelines(result)
+
 
