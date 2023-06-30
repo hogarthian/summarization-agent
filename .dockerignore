@@ -1,0 +1,10 @@
+*/temp*
+*/*/temp*
+temp?
+.git
+*/*.secrets
+.venv
+kfp/*
+*.env
+*.ipynb
+ggml-model-q4_0.bin
